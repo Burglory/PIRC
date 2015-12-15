@@ -1,0 +1,9 @@
+4,Radio 4,http://icecast.omroep.nl/radio4-bb-mp3,classical
+2,Radio 2,http://icecast.omroep.nl/radio2-bb-mp3,serious
+1,Radio 1,http://icecast.omroep.nl/radio1-bb-mp3,serious
+3,3FM,http://icecast.omroep.nl/3fm-bb-mp3,pop
+5,Qmusic,http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3,pop
+6,SkyRadio,http://8623.live.streamtheworld.com/SKYRADIOAAC,pop
+7,ClassicFM,http://8503.live.streamtheworld.com/CLASSICFMAAC,classical
+8,Highlander Radio,http://50.7.71.30:9584/,irish
+9,Live Ireland,http://66.90.73.250:8080/,irish
