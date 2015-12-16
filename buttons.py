@@ -1,0 +1,24 @@
+Buttons = [
+    "key-play",
+    "key-quit",
+    "key-pause",
+    "key-stop",
+    "key-next",
+    "key-prev",
+    "key-nextgenre",
+    "key-previousgenre",
+    "key-volup",
+    "key-voldown",
+    "key-one",
+    "key-two",
+    "key-three",
+    "key-four",
+    "key-five",
+    "key-six",
+    "key-seven",
+    "key-eight",
+    "key-nine",
+    "key-zero"
+    "key-previouschannel",
+    "key-mute"
+    ]

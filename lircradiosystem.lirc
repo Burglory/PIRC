@@ -105,3 +105,8 @@ begin
 	button = Pre-Ch
 	config = key-previouschannel
 end
+begin
+	prog = lircradiosystem
+	button = KEY_MUTE
+	config = key-mute
+end
