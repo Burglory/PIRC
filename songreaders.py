@@ -4,6 +4,16 @@ class AbstractSongReader(object):
 
     def read(self):
         raise NotImplementedError("You cannot run an abstract class!")
+    
+class VLCSongReader(AbstractSongReader):
+
+    def __init__(self):
+        self.req = urllib2.Request('http://localhost:8080/now_playing_raw.xml')
+
+    def read(self):
+        resp = urllib2.urlopen(self.req)
+        content = resp.read()
+        return content.replace("\n", "")
 
 class Radio4SongReader(AbstractSongReader):
 
