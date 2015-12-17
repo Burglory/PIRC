@@ -26,19 +26,14 @@ class SkyradioReader(AbstractSongReader):
         resp = urllib2.urlopen(self.req)
         content = resp.read()
         xmldoc = minidom.parseString(content)
-        attributes = xmldoc.getElementsByTagName('stwcue')[0].getElementsByTagName('cuepoint')[0].getElementsByTagName('attributes')[0]
+        attributes = xmldoc.getElementsByTagName('attribute')
         title = ""
         artist = ""
-        for attribute in attributes.getElementsByTagName('attribute'):
-            #print(attribute.attributes["name"].value)
-            #print(attribute.nodeType)
-            #print(attribute.TEXT_NODE)
+        for attribute in attributes:
             if attribute.attributes["name"].value=="cue_title":
                 title = attribute.firstChild.data
             if attribute.attributes["name"].value=="track_artist_name":
                 artist = attribute.firstChild.data
-        #print(title)
-        #print(artist)
         return artist + " - " + title
                 
 
