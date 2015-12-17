@@ -1,4 +1,6 @@
-import json, urllib2
+import json
+import urllib2
+from xml.dom import minidom
 
 class AbstractSongReader(object):
 
@@ -14,6 +16,31 @@ class VLCSongReader(AbstractSongReader):
         resp = urllib2.urlopen(self.req)
         content = resp.read()
         return content.replace("\n", "")
+
+class SkyradioReader(AbstractSongReader):
+    
+    def __init__(self):
+        self.req = urllib2.Request('http://www.skyradio.nl/cdn/player_skyradio.xml')
+
+    def read(self):
+        resp = urllib2.urlopen(self.req)
+        content = resp.read()
+        xmldoc = minidom.parseString(content)
+        attributes = xmldoc.getElementsByTagName('stwcue')[0].getElementsByTagName('cuepoint')[0].getElementsByTagName('attributes')[0]
+        title = ""
+        artist = ""
+        for attribute in attributes.getElementsByTagName('attribute'):
+            #print(attribute.attributes["name"].value)
+            #print(attribute.nodeType)
+            #print(attribute.TEXT_NODE)
+            if attribute.attributes["name"].value=="cue_title":
+                title = attribute.firstChild.data
+            if attribute.attributes["name"].value=="track_artist_name":
+                artist = attribute.firstChild.data
+        #print(title)
+        #print(artist)
+        return artist + " - " + title
+                
 
 class Radio4SongReader(AbstractSongReader):
 
@@ -39,4 +66,4 @@ class Radio2SongReader(AbstractSongReader):
 
 
 if __name__ == "__main__":
-    print(Radio4SongReader().read())
+    print(SkyradioReader().read())
