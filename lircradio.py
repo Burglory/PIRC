@@ -1,79 +1,14 @@
 import socket
 import lirc
 import os
+import src.vlcinterfaces
+import src.irinterfaces
+import src.streams
 
-class Stream:
 
-    def __init__(self, channel, name, url, genre):
-        self.genre = genre
-        self.channel = channel
-        self.name = name
-        self.url = url
 
-    def getName(self):
-        return self.name
 
-    def getChannel(self):
-        return self.channel
 
-    def getURL(self):
-        return self.url
-
-    def getGenre(self):
-        return self.genre
-
-class VLCInterface:
-
-    PLAY = 'play'
-    STOP = 'stop'
-    NEXT = 'next'
-    ENQUEUE = 'enqueue'
-    PAUSE = 'pause'
-    CLEAR = 'clear'
-    GOTO = 'goto'
-    VOLUP = 'volup'
-    VOLDOWN = 'voldown'
-    ADD = 'add'
-   
-
-    def __init__(self, addr, port):
-        self.addr = addr
-        self.port = port
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((addr, port))
-
-    def shutdown(self):
-        self.socket.send('quit\n'.encode('utf-8'))
-        self.socket.close()
-    
-    def send(self, command):
-        self.socket.send((command + '\n').encode('utf-8'))
-
-class IRInterface:
-
-    def __init__(self):
-        lirc.init("lircradiosystem","lircradiosystem.lirc")
-        self.counter = 3
-        self.channel = ""
-        self.numkeys = ["key-zero","key-one","key-two","key-three","key-four","key-five","key-six","key-seven","key-eight","key-nine"]
-        
-    def readIRInput(self):
-        i = lirc.nextcode()
-        if len(i)>0:
-            command = i[0]
-            for i, j in enumerate(self.numkeys):
-                if j == command:
-                    self.channel = self.channel+str(i)
-                    self.counter = self.counter - 1
-                    if self.counter == 0:
-                        result = "key-channelselection " + self.channel
-                        self.channel = ""
-                        self.counter = 3
-                        return result
-                    else:
-                        return ""
-            return command
-        return ""
 
 class MainRadioSystem:
 
@@ -84,6 +19,8 @@ class MainRadioSystem:
         self.currentgenreindex = 0
         self.currentstreamindex = 0
         self.previousstreamindex = 0
+        self.volume = 200
+        self.oldvolume = -1
 
     def readStreamList(self):
         f = open('streams.txt', 'r')
@@ -93,7 +30,7 @@ class MainRadioSystem:
             genre = s[3].split('\n')[0]
             if not genre in self.genrelist:
                 self.genrelist.append(genre)
-            self.streamlist.append(Stream(int(s[0]), s[1], s[2], genre))
+            self.streamlist.append(src.streams.Stream(int(s[0]), s[1], s[2], genre))
         self.streamlist.sort(key=lambda x: x.getChannel(), reverse=False)
         self.genrelist.sort()
         f.close()
@@ -192,10 +129,23 @@ class MainRadioSystem:
         self.v.send(self.v.PAUSE)
 
     def volup(self):
-        self.v.send(self.v.VOLUP + ' 1')
+        self.oldvolume = self.volume
+        self.volume = self.volume + 5
+        self.v.send(self.v.VOLUME + ' ' + str(self.volume))
 
     def voldown(self):
-        self.v.send(self.v.VOLDOWN + ' 1')           
+        self.oldvolume = self.volume
+        self.volume = self.volume - 5
+        self.v.send(self.v.VOLUME + ' ' + str(self.volume))
+
+    def mute_unmute(self):
+        if self.volume == 0:
+            self.volume = self.oldvolume
+            self.v.send(self.v.VOLUME + ' ' + str(self.volume))
+        else:
+            self.oldvolume = self.volume
+            self.volume = 0
+            self.v.send(self.v.VOLUME + ' ' + str(self.volume))
 
     def processIRInput(self, i):
         print("received input: " + i)
@@ -224,11 +174,16 @@ class MainRadioSystem:
             self.voldown()
         elif "key-previouschannel" in i:
             self.previousChannel()
+        elif "key-mute" in i:
+            self.mute_unmute()
 
+
+    
     def mainLoop(self):
-        self.v = VLCInterface("localhost", 8080)
+        self.v = src.vlcinterfaces.VLCInterface("localhost", 8080)
+        self.v.send(self.v.VOLUME + ' ' + str(self.volume))
         print("Connected")
-        irint = IRInterface()
+        irint = src.irinterfaces.IRInterface()
         print("IR interface loaded")
         self.readStreamList()
         print("Stream file read")
