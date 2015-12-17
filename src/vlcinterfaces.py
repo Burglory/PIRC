@@ -18,8 +18,7 @@ class VLCInterface:
     def __init__(self, addr, port):
         self.addr = addr
         self.port = port
-        self.process = 
-subprocess.Popen(['cvlc','-I','http','--extraintf','rc','--rc-host','localhost:8080','--http-src','','--http-password','admin','--http-host','localhost:80','--http-port','80','http://icecast.omroep.nl/radio4-bb-mp3'])
+        self.process = subprocess.Popen(['cvlc','-I','http','--extraintf','rc','--rc-host','localhost:8080','--http-src','','--http-password','admin','--http-host','localhost:80','--http-port','80','http://icecast.omroep.nl/radio4-bb-mp3'])
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tries = 10
         while tries > 0:
