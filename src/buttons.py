@@ -20,5 +20,7 @@ Buttons = [
     "key-nine",
     "key-zero"
     "key-previouschannel",
-    "key-mute"
+    "key-mute",
+    "key-moveswitch",
+    "key-speechswitch"
     ]
