@@ -23,7 +23,7 @@ class MainRadioSystem:
         self.oldvolume = -1
 
     def readStreamList(self):
-        f = open('streams.txt', 'r')
+        f = open('streams.source', 'r')
         lines = f.readlines()
         for line in lines:
             s = line.split(',')
