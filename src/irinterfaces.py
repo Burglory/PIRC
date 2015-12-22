@@ -1,4 +1,8 @@
-import lirc
+
+try:
+    import lirc
+except ImportError:
+    print("Error: Could not import python lirc package. Is it installed?")
 
 class IRInterface:
 
@@ -25,3 +29,6 @@ class IRInterface:
                         return ""
             return command
         return ""
+    
+    def shutdown(self):
+        lirc.deinit()

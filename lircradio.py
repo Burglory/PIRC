@@ -1,5 +1,4 @@
 import socket
-import lirc
 import os
 import src.vlcinterfaces
 import src.irinterfaces
@@ -14,15 +13,17 @@ class MainRadioSystem:
 
     def __init__(self):
         self.v = None
-        self.streamlist = []
-        self.genrelist = []
+        self.streamlist = lst()
+        self.genrelist = lst()
         self.currentgenreindex = 0
         self.currentstreamindex = 0
         self.previousstreamindex = 0
         self.volume = 200
         self.oldvolume = -1
+        self.channelmapping = dict()
+        self.irint = None
 
-    def readStreamList(self):
+    def readSourceStreamList(self):
         f = open('streams.source', 'r')
         lines = f.readlines()
         for line in lines:
@@ -34,10 +35,25 @@ class MainRadioSystem:
         self.streamlist.sort(key=lambda x: x.getChannel(), reverse=False)
         self.genrelist.sort()
         f.close()
+        
+    def readSelectionStreamList(self):
+        if not os.path.isfile("streams.selection"):
+            f = open('streams.selection','w')
+            f.write("\n")
+            f.close()
+        f = open('streams.selection','r')
+        lines = f.readlines()
+        for line in lines():
+            s = line.split(',')
+            selchannel = s[0]
+            srcchannel = s[1].replace('\n','')
+            self.channelmapping[selchannel]=srcchannel
+        f.close()
+            
        
     def shutdown(self):
         self.v.shutdown()
-        lirc.deinit()
+        self.irint.shutdown()
         os.system("shutdown now -h")
         exit(0)
 
@@ -183,15 +199,15 @@ class MainRadioSystem:
         self.v = src.vlcinterfaces.VLCInterface("localhost", 8080)
         self.v.send(self.v.VOLUME + ' ' + str(self.volume))
         print("Connected")
-        irint = src.irinterfaces.IRInterface()
+        self.irint = src.irinterfaces.IRInterface()
         print("IR interface loaded")
-        self.readStreamList()
+        self.readSourceStreamList()
         print("Stream file read")
 
         print("Starting loop")
         while True:
             try:
-                i = irint.readIRInput()
+                i = self.irint.readIRInput()
                 if len(i) > 0:
                     self.processIRInput(i)
             except (KeyboardInterrupt):
