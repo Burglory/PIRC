@@ -13,8 +13,8 @@ class MainRadioSystem:
 
     def __init__(self):
         self.v = None
-        self.streamlist = lst()
-        self.genrelist = lst()
+        self.streamlist = list()
+        self.genrelist = list()
         self.currentgenreindex = 0
         self.currentstreamindex = 0
         self.previousstreamindex = 0
