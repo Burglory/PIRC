@@ -2,10 +2,13 @@ import os.path
 
 class Config(object):
 
+    configDict = dict()
+    file_path = None
+
     def __init__(self, file_path):
-        self.configdictionary = dict()
+        Config.configDict = dict()
         self.load(file_path)
-        self.file_path = file_path
+        Config.file_path = file_path
 
     def load(self, file_path):
         f = None
@@ -25,23 +28,24 @@ class Config(object):
         lines = contents.split("\n")
         for line in lines:
             keyvalue = line.split("=", 1)
-            self.configdictionary[keyvalue[0]] = keyvalue[1]
+            Config.configDict[keyvalue[0]] = keyvalue[1]
         print("Config file loaded.")
+        Config.file_path = file_path
 
     def getValue(self, key):
         result = ""
-        if key in self.configdictionary.keys():
-            result = self.configdictionary[key]
+        if key in Config.configDict.keys():
+            result = Config.configDict[key]
         return result
 
     def setValue(self, key, value):
-        self.configdictionary[key] = value
+        Config.configDict[key] = value
 
     def save(self):
         result = ""
-        for key in self.configdictionary.keys():
-            result = result + key + "=" + self.configdictionary[key] + "\n"
-        f = open(self.file_path, 'w')
+        for key in Config.configDict.keys():
+            result = result + key + "=" + Config.configDict[key] + "\n"
+        f = open(Config.file_path, 'w')
         f.write(result)
         f.close()
 
