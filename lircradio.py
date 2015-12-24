@@ -24,17 +24,23 @@ class MainRadioSystem:
         self.irint = None
 
     def readSourceStreamList(self):
-        f = open('streams.source', 'r')
-        lines = f.readlines()
-        for line in lines:
-            s = line.split(',')
-            genre = s[3].split('\n')[0]
-            if not genre in self.genrelist:
-                self.genrelist.append(genre)
-            self.streamlist.append(src.streams.Stream(int(s[0]), s[1], s[2], genre))
-        self.streamlist.sort(key=lambda x: x.getChannel(), reverse=False)
-        self.genrelist.sort()
-        f.close()
+        print(os.getcwd())
+        if os.path.isfile("streams.source"):
+            f = open('streams.source', 'r')
+            lines = f.read().split('\n')
+            for line in lines:
+                if not line:
+                    continue
+                s = line.split(',')
+                genre = s[3]
+                if not genre in self.genrelist:
+                    self.genrelist.append(genre)
+                self.streamlist.append(src.streams.Stream(int(s[0]), s[1], s[2], genre))
+            self.streamlist.sort(key=lambda x: x.getChannel(), reverse=False)
+            self.genrelist.sort()
+            f.close()
+        else:
+            print("Error: No streams have been loaded because the streams.source was not found.")
         
     def readSelectionStreamList(self):
         if not os.path.isfile("streams.selection"):
@@ -42,11 +48,13 @@ class MainRadioSystem:
             f.write("\n")
             f.close()
         f = open('streams.selection','r')
-        lines = f.readlines()
+        lines = f.read().split('\n')
         for line in lines():
+            if not line:
+                continue
             s = line.split(',')
             selchannel = s[0]
-            srcchannel = s[1].replace('\n','')
+            srcchannel = s[1]
             self.channelmapping[selchannel]=srcchannel
         f.close()
             
