@@ -1,13 +1,10 @@
 import socket
 import os
+import sys
 import src.vlcinterfaces
 import src.irinterfaces
 import src.streams
-
-
-
-
-
+import src.configs
 
 class MainRadioSystem:
 
@@ -18,13 +15,11 @@ class MainRadioSystem:
         self.currentgenreindex = 0
         self.currentstreamindex = 0
         self.previousstreamindex = 0
-        self.volume = 200
-        self.oldvolume = -1
         self.channelmapping = dict()
         self.irint = None
 
     def readSourceStreamList(self):
-        print(os.getcwd())
+        #print(os.getcwd())
         if os.path.isfile("streams.source"):
             f = open('streams.source', 'r')
             lines = f.read().split('\n')
@@ -52,17 +47,24 @@ class MainRadioSystem:
         for line in lines():
             if not line:
                 continue
-            s = line.split(',')
+            s = line.split('=')
             selchannel = s[0]
             srcchannel = s[1]
             self.channelmapping[selchannel]=srcchannel
         f.close()
-            
+        
+    def saveSelectionStreamList(self):
+        out = ""
+        for key in self.channelmapping.keys():
+            out = out + key + "=" + self.channelmapping[key] + "\n"
+        f = open('streams.selection','w')
+        f.write(out)
+        f.close()
        
     def shutdown(self):
         self.v.shutdown()
         self.irint.shutdown()
-        os.system("shutdown now -h")
+        #os.system("shutdown now -h")
         exit(0)
 
     def previousChannel(self):
@@ -134,56 +136,25 @@ class MainRadioSystem:
         self.playstreamindex(index)
 
     def playstreamindex(self, index):
-        print("Enqueueing: " + self.streamlist[index].getURL())
-        #self.v.send(self.v.ENQUEUE + ' ' + self.streamlist[index].getURL())
-        #self.v.send(self.v.NEXT)
-        self.v.send(self.v.CLEAR)
-        self.v.send(self.v.ADD + ' ' + self.streamlist[index].getURL())
+        print("Playing: " + self.streamlist[index].getURL())
+        self.v.play(self.streamlist[index].getURL())
         self.previousstreamindex = self.currentstreamindex
         self.currentstreamindex = index
         self.currentgenreindex = self.genrelist.index(self.streamlist[index].getGenre())
 
-    def play(self):
-        self.v.send(self.v.PLAY)
-
-    def stop(self):
-        self.v.send(self.v.STOP)
-
-    def pause(self):
-        self.v.send(self.v.PAUSE)
-
-    def volup(self):
-        self.oldvolume = self.volume
-        self.volume = self.volume + 5
-        self.v.send(self.v.VOLUME + ' ' + str(self.volume))
-
-    def voldown(self):
-        self.oldvolume = self.volume
-        self.volume = self.volume - 5
-        self.v.send(self.v.VOLUME + ' ' + str(self.volume))
-
-    def mute_unmute(self):
-        if self.volume == 0:
-            self.volume = self.oldvolume
-            self.v.send(self.v.VOLUME + ' ' + str(self.volume))
-        else:
-            self.oldvolume = self.volume
-            self.volume = 0
-            self.v.send(self.v.VOLUME + ' ' + str(self.volume))
-
     def processIRInput(self, i):
-        print("received input: " + i)
+        print("Received input: " + i)
         if "key-channelselection" in i:
             channel = int(i.split(' ')[1])
             self.findIndexForNearestPreviousChannel(channel)
         elif "key-play" in i:
-            self.play()
+            self.v.play()
         elif "key-quit" in i:
             self.shutdown()
         elif "key-pause" in i:
-            self.pause()
+            self.v.pause()
         elif "key-stop" in i:
-            self.stop()
+            self.v.stop()
         elif "key-next" in i:
             self.nextStream()
         elif "key-prev" in i:
@@ -193,18 +164,26 @@ class MainRadioSystem:
         elif "key-previousgenre" in i:
             self.previousGenre()
         elif "key-volup" in i:
-            self.volup()
+            self.v.volup(5)
         elif "key-voldown" in i:
-            self.voldown()
+            self.v.voldown(5)
         elif "key-previouschannel" in i:
             self.previousChannel()
         elif "key-mute" in i:
-            self.mute_unmute()
+            self.v.mute_unmute()
 
-
+    def extractConfigFileArgument(self):
+        if len(sys.argv) > 1:
+            return sys.arv[1]
+        return ""
     
     def mainLoop(self):
-        self.v = src.vlcinterfaces.VLCInterface("localhost", 8080)
+        cfile = "default.conf"
+        if self.extractConfigFileArgument():
+            cfile = self.extractConfigFileArgument()
+        src.configs.Config(cfile)   
+         
+        self.v = src.vlcinterfaces.VLCInterface()
         self.v.send(self.v.VOLUME + ' ' + str(self.volume))
         print("Connected")
         self.irint = src.irinterfaces.IRInterface()
@@ -219,8 +198,9 @@ class MainRadioSystem:
                 if len(i) > 0:
                     self.processIRInput(i)
             except (KeyboardInterrupt):
-                self.shutdown()
                 print("Shutting down")
+                self.shutdown()
+                
 
 if __name__ == "__main__":
     m = MainRadioSystem()

@@ -4,6 +4,7 @@ class Config(object):
 
     configDict = dict()
     file_path = None
+    isloaded = False
 
     def __init__(self, file_path):
         Config.configDict = dict()
@@ -31,6 +32,7 @@ class Config(object):
             Config.configDict[keyvalue[0]] = keyvalue[1]
         print("Config file loaded.")
         Config.file_path = file_path
+        Config.isloaded = True
 
     def getValue(self, key):
         result = ""
