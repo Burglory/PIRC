@@ -1,6 +1,5 @@
 import socket, subprocess, time
-from src.configs import Config
-#import configs.Config
+import src.configs
 
 class VLCInterface:
 
@@ -21,39 +20,39 @@ class VLCInterface:
         self.vol = 200
         self.oldvol = -1
         #Remove this line:
-        Config("../default.conf")
-        if Config.isloaded:
-            self.addr = Config.configDict["RC_HOST"].split(":")[0]
-            self.port = int(Config.configDict["RC_HOST"].split(":")[1])
+        #src.configs.Config("../default.conf")
+        if src.configs.Config.isloaded:
+            self.addr = src.configs.Config.configDict["RC_HOST"].split(":")[0]
+            self.port = int(src.configs.Config.configDict["RC_HOST"].split(":")[1])
         else:
-            print("Error: VLCInterface: Config file has not been loaded.")
+            print("Error: VLCInterface: src.configs.Config file has not been loaded.")
             exit(1)
 
         runcommand = []
-        if Config.configDict["VLC"]:
-            runcommand.append(Config.configDict["VLC"])
-        if Config.configDict["RC_HOST"]:
+        if src.configs.Config.configDict["VLC"]:
+            runcommand.append(src.configs.Config.configDict["VLC"])
+        if src.configs.Config.configDict["RC_HOST"]:
             runcommand.append("--extraintf")
             runcommand.append("rc")
             runcommand.append("--rc-host")
-            runcommand.append(Config.configDict["RC_HOST"])
-        if Config.configDict["HTTP_ENABLED"] == "1":
+            runcommand.append(src.configs.Config.configDict["RC_HOST"])
+        if src.configs.Config.configDict["HTTP_ENABLED"] == "1":
             runcommand.append("-I")
             runcommand.append("http") 
-            if Config.configDict["HTTP_SRC"]:
+            if src.configs.Config.configDict["HTTP_SRC"]:
                 runcommand.append("--http-src")
-                runcommand.append(Config.configDict["HTTP_SRC"])
-            if Config.configDict["HTTP_PASSWORD"]:
+                runcommand.append(src.configs.Config.configDict["HTTP_SRC"])
+            if src.configs.Config.configDict["HTTP_PASSWORD"]:
                 runcommand.append("--http-password")
-                runcommand.append(Config.configDict["HTTP_PASSWORD"])
-            if Config.configDict["HTTP_HOST"]:
+                runcommand.append(src.configs.Config.configDict["HTTP_PASSWORD"])
+            if src.configs.Config.configDict["HTTP_HOST"]:
                 runcommand.append("--http-host")
-                runcommand.append(Config.configDict["HTTP_HOST"])
-            if Config.configDict["HTTP_PORT"]:
+                runcommand.append(src.configs.Config.configDict["HTTP_HOST"])
+            if src.configs.Config.configDict["HTTP_PORT"]:
                 runcommand.append("--http-port")
-                runcommand.append(Config.configDict["HTTP_PORT"])
+                runcommand.append(src.configs.Config.configDict["HTTP_PORT"])
         print("Starting the player with the following command: \n\t"+" ".join(runcommand))    
-        self.process = subprocess.Popen(runcommand)
+        self.process = subprocess.Popen(runcommand, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tries = 10
         while tries > 0:

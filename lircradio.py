@@ -1,6 +1,7 @@
 import socket
 import os
 import sys
+import threading
 import src.vlcinterfaces
 import src.irinterfaces
 import src.streams
@@ -20,8 +21,8 @@ class MainRadioSystem:
 
     def readSourceStreamList(self):
         #print(os.getcwd())
-        if os.path.isfile("streams.source"):
-            f = open('streams.source', 'r')
+        if os.path.isfile(src.configs.Config.configDict["STREAM_SOURCE_FILE"]):
+            f = open(src.configs.Config.configDict["STREAM_SOURCE_FILE"], 'r')
             lines = f.read().split('\n')
             for line in lines:
                 if not line:
@@ -38,11 +39,11 @@ class MainRadioSystem:
             print("Error: No streams have been loaded because the streams.source was not found.")
         
     def readSelectionStreamList(self):
-        if not os.path.isfile("streams.selection"):
-            f = open('streams.selection','w')
+        if not os.path.isfile(src.configs.Config.configDict["STREAM_SELECTION_FILE"]):
+            f = open(src.configs.Config.configDict["STREAM_SELECTION_FILE"],'w')
             f.write("\n")
             f.close()
-        f = open('streams.selection','r')
+        f = open(src.configs.Config.configDict["STREAM_SELECTION_FILE"],'r')
         lines = f.read().split('\n')
         for line in lines():
             if not line:
@@ -57,7 +58,7 @@ class MainRadioSystem:
         out = ""
         for key in self.channelmapping.keys():
             out = out + key + "=" + self.channelmapping[key] + "\n"
-        f = open('streams.selection','w')
+        f = open(src.configs.Config.configDict["STREAM_SELECTION_FILE"],'w')
         f.write(out)
         f.close()
        
@@ -177,6 +178,16 @@ class MainRadioSystem:
             return sys.arv[1]
         return ""
     
+    def readLoop(self):
+        while True:
+            try:
+                i = self.irint.readIRInput()
+                if len(i) > 0:
+                    self.processIRInput(i)
+            except (KeyboardInterrupt):
+                print("Shutting down")
+                self.shutdown()
+    
     def mainLoop(self):
         cfile = "default.conf"
         if self.extractConfigFileArgument():
@@ -192,14 +203,10 @@ class MainRadioSystem:
         print("Stream file read")
 
         print("Starting loop")
-        while True:
-            try:
-                i = self.irint.readIRInput()
-                if len(i) > 0:
-                    self.processIRInput(i)
-            except (KeyboardInterrupt):
-                print("Shutting down")
-                self.shutdown()
+        self.readLoop()
+        #t=threading.Thread(target=self.readLoop)
+        #t.daemon = True
+        #t.start()
                 
 
 if __name__ == "__main__":
