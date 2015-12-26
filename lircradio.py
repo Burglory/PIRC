@@ -22,6 +22,7 @@ class MainRadioSystem:
 
     def readSourceStreamList(self):
         #print(os.getcwd())
+        src.logger.logInfo("Reading streams source file...")
         if os.path.isfile(src.configs.Config.configDict["STREAM_SOURCE_FILE"]):
             f = open(src.configs.Config.configDict["STREAM_SOURCE_FILE"], 'r')
             lines = f.read().split('\n')
@@ -39,6 +40,7 @@ class MainRadioSystem:
         else:
             src.logger.logFError("Error: No streams have been loaded because the streams.source was not found.")
             self.shutdown()
+        src.logger.logOk("Streams source file read.")
             
     def readSelectionStreamList(self):
         if not os.path.isfile(src.configs.Config.configDict["STREAM_SELECTION_FILE"]):
@@ -182,6 +184,7 @@ class MainRadioSystem:
         return ""
     
     def readLoop(self):
+        src.logger.logInfo("Waiting for IR input...")
         while True:
             try:
                 i = self.irint.readIRInput()
@@ -195,12 +198,14 @@ class MainRadioSystem:
         cfile = "default.conf"
         if self.extractConfigFileArgument():
             cfile = self.extractConfigFileArgument()
-        src.configs.Config(cfile)   
-         
+        src.configs.Config(cfile)
+           
+        self.readSourceStreamList()
+                 
         self.v = src.vlcinterfaces.VLCInterface()
         self.v.volume(self.v.vol)
         self.irint = src.irinterfaces.IRInterface()
-        self.readSourceStreamList()
+
 
         src.logger.logInfo("Starting main loop...")
         self.readLoop()

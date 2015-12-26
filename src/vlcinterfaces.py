@@ -21,14 +21,8 @@ class VLCInterface:
         src.logger.logInfo("Initializing VLCInterface...")
         self.vol = 200
         self.oldvol = -1
-        #Remove this line:
-        #src.configs.Config("../default.conf")
-        if src.configs.Config.isloaded:
-            self.addr = src.configs.Config.configDict["RC_HOST"].split(":")[0]
-            self.port = int(src.configs.Config.configDict["RC_HOST"].split(":")[1])
-        else:
-            src.logger.logFError("VLCInterface: src.configs.Config file has not been loaded.")
-            exit(1)
+        self.addr = src.configs.Config.configDict["RC_HOST"].split(":")[0]
+        self.port = int(src.configs.Config.configDict["RC_HOST"].split(":")[1])
 
         runcommand = []
         if src.configs.Config.configDict["VLC"]:

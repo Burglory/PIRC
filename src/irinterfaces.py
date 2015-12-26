@@ -1,5 +1,6 @@
 import time
 import src.logger
+import argparse
 
 lircinstalled = True
 try:

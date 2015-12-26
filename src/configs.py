@@ -2,7 +2,20 @@ import os.path
 
 class Config(object):
 
-    configDict = dict()
+    configDict = {
+                  "SOFTWARE_SOURCE_URL":"https://github.com/Burglory/PIRC",
+                  "STREAM_SOURCE_FILE":"streams.source",
+                  "STREAM_SELECTION_FILE":"streams.selection",
+                  "SHUTDOWN_COMMAND":"shutdown -h now",
+                  "RC_HOST":"localhost:8080",
+                  "HTTP_ENABLED":"1",
+                  "HTTP_SRC":" ",
+                  "HTTP_HOST":"localhost:80",
+                  "HTTP_PASSWORD":"admin",
+                  "HTTP_PORT":"80",
+                  "VLC":"cvlc"
+    }
+    
     file_path = None
     isloaded = False
 
