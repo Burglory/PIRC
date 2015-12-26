@@ -184,7 +184,7 @@ class MainRadioSystem:
         src.configs.Config(cfile)   
          
         self.v = src.vlcinterfaces.VLCInterface()
-        self.v.send(self.v.VOLUME + ' ' + str(self.volume))
+        self.v.volume(self.v.vol)
         print("Connected")
         self.irint = src.irinterfaces.IRInterface()
         print("IR interface loaded")

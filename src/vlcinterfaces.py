@@ -1,5 +1,6 @@
 import socket, subprocess, time
-import src.configs.Config
+from src.configs import Config
+#import configs.Config
 
 class VLCInterface:
 
@@ -16,39 +17,42 @@ class VLCInterface:
     VOLUME = 'volume'
    
 
-    def __init__(self, addr = "localhost", port = 8080):
-        self.volume = 200
-        self.oldvolume = -1
-        if src.configs.Config.isloaded:
-            self.addr = src.configs.Config.configDict["RC_HOST"].split(":")[0]
-            self.port = int(src.configs.Config.configDict["RC_HOST"].split(":")[1])
+    def __init__(self):
+        self.vol = 200
+        self.oldvol = -1
+        #Remove this line:
+        Config("../default.conf")
+        if Config.isloaded:
+            self.addr = Config.configDict["RC_HOST"].split(":")[0]
+            self.port = int(Config.configDict["RC_HOST"].split(":")[1])
         else:
-            self.addr = addr
-            self.port = port
+            print("Error: VLCInterface: Config file has not been loaded.")
+            exit(1)
+
         runcommand = []
-        if src.configs.Config.configDict["VLC"]:
-            runcommand.append(src.configs.Config.configDict["VLC"])
-        if src.configs.Config.configDict["RC_HOST"]:
+        if Config.configDict["VLC"]:
+            runcommand.append(Config.configDict["VLC"])
+        if Config.configDict["RC_HOST"]:
             runcommand.append("--extraintf")
             runcommand.append("rc")
             runcommand.append("--rc-host")
-            runcommand.append(src.configs.Config.configDict["RC_HOST"])
-        if src.configs.Config.configDict["HTTP_ENABLED"] == "1":
-            runcommand.append("--I")
+            runcommand.append(Config.configDict["RC_HOST"])
+        if Config.configDict["HTTP_ENABLED"] == "1":
+            runcommand.append("-I")
             runcommand.append("http") 
-            if src.configs.Config.configDict["HTTP_SRC"]:
+            if Config.configDict["HTTP_SRC"]:
                 runcommand.append("--http-src")
-                runcommand.append(src.configs.Config.configDict["HTTP_SRC"])
-            if src.configs.Config.configDict["HTTP_PASSWORD"]:
+                runcommand.append(Config.configDict["HTTP_SRC"])
+            if Config.configDict["HTTP_PASSWORD"]:
                 runcommand.append("--http-password")
-                runcommand.append(src.configs.Config.configDict["HTTP_PASSWORD"])
-            if src.configs.Config.configDict["HTTP_HOST"]:
+                runcommand.append(Config.configDict["HTTP_PASSWORD"])
+            if Config.configDict["HTTP_HOST"]:
                 runcommand.append("--http-host")
-                runcommand.append(src.configs.Config.configDict["HTTP_HOST"])
-            if src.configs.Config.configDict["HTTP_PORT"]:
+                runcommand.append(Config.configDict["HTTP_HOST"])
+            if Config.configDict["HTTP_PORT"]:
                 runcommand.append("--http-port")
-                runcommand.append(src.configs.Config.configDict["HTTP_PORT"])
-            
+                runcommand.append(Config.configDict["HTTP_PORT"])
+        print("Starting the player with the following command: \n\t"+" ".join(runcommand))    
         self.process = subprocess.Popen(runcommand)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tries = 10
@@ -78,14 +82,19 @@ class VLCInterface:
         self.send(self.PAUSE)
         
     def volup(self, amount):
-        self.oldvolume = self.volume
-        self.volume = self.volume + amount
-        self.send(self.VOLUME + ' ' + str(self.volume))
+        self.oldvol = self.vol
+        self.vol = self.vol + amount
+        self.send(self.VOLUME + ' ' + str(self.vol))
 
     def voldown(self, amount):
-        self.oldvolume = self.volume
-        self.volume = self.volume - amount
-        self.send(self.VOLUME + ' ' + str(self.volume))
+        self.oldvol = self.vol
+        self.vol = self.vol - amount
+        self.send(self.VOLUME + ' ' + str(self.vol))
+        
+    def volume(self, volume):
+        self.oldvol = self.vol
+        self.vol = volume
+        self.send(self.VOLUME + ' ' + str(volume))
 
     def clear(self):
         self.send(self.CLEAR)
@@ -95,13 +104,13 @@ class VLCInterface:
         self.send(self.ADD + " " + url)
 
     def mute_unmute(self):
-        if self.volume == 0:
-            self.volume = self.oldvolume
-            self.send(self.VOLUME + ' ' + str(self.volume))
+        if self.vol == 0:
+            self.vol = self.oldvol
+            self.send(self.VOLUME + ' ' + str(self.vol))
         else:
-            self.oldvolume = self.volume
-            self.volume = 0
-            self.send(self.VOLUME + ' ' + str(self.volume))
+            self.oldvol = self.vol
+            self.vol = 0
+            self.send(self.VOLUME + ' ' + str(self.vol))
     
     def send(self, command):
         self.socket.send((command + '\n').encode('utf-8'))
