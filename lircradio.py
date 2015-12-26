@@ -6,6 +6,7 @@ import src.vlcinterfaces
 import src.irinterfaces
 import src.streams
 import src.configs
+import src.logger
 
 class MainRadioSystem:
 
@@ -36,8 +37,9 @@ class MainRadioSystem:
             self.genrelist.sort()
             f.close()
         else:
-            print("Error: No streams have been loaded because the streams.source was not found.")
-        
+            src.logger.logFError("Error: No streams have been loaded because the streams.source was not found.")
+            self.shutdown()
+            
     def readSelectionStreamList(self):
         if not os.path.isfile(src.configs.Config.configDict["STREAM_SELECTION_FILE"]):
             f = open(src.configs.Config.configDict["STREAM_SELECTION_FILE"],'w')
@@ -63,6 +65,7 @@ class MainRadioSystem:
         f.close()
        
     def shutdown(self):
+        src.logger.logInfo("Shutting down radio...")
         self.v.shutdown()
         self.irint.shutdown()
         #os.system("shutdown now -h")
@@ -75,7 +78,7 @@ class MainRadioSystem:
         index = self.currentgenreindex + 1
         while index >= len(self.genrelist):
             index = index - len(self.genrelist)
-        print("Picking genre: " + self.genrelist[index])
+        src.logger.logInfo("Picking genre: " + self.genrelist[index])
         for i in range(0, len(self.streamlist)):
             if self.streamlist[i].getGenre()==self.genrelist[index]:
                 self.playstreamindex(i)
@@ -85,7 +88,7 @@ class MainRadioSystem:
         index = self.currentgenreindex - 1
         while index < 0:
             index = index + len(self.genrelist)
-        print("Picking genre: " + self.genrelist[index])
+        src.logger.logInfo("Picking genre: " + self.genrelist[index])
         for i in range(0, len(self.streamlist)):
             if self.streamlist[i].getGenre()==self.genrelist[index]:
                 self.playstreamindex(i)
@@ -137,14 +140,14 @@ class MainRadioSystem:
         self.playstreamindex(index)
 
     def playstreamindex(self, index):
-        print("Playing: " + self.streamlist[index].getURL())
+        src.logger.logInfo("Playing: " + self.streamlist[index].getURL())
         self.v.play(self.streamlist[index].getURL())
         self.previousstreamindex = self.currentstreamindex
         self.currentstreamindex = index
         self.currentgenreindex = self.genrelist.index(self.streamlist[index].getGenre())
 
     def processIRInput(self, i):
-        print("Received input: " + i)
+        src.logger.logInfo("Received input: " + i)
         if "key-channelselection" in i:
             channel = int(i.split(' ')[1])
             self.findIndexForNearestPreviousChannel(channel)
@@ -185,7 +188,7 @@ class MainRadioSystem:
                 if len(i) > 0:
                     self.processIRInput(i)
             except (KeyboardInterrupt):
-                print("Shutting down")
+                src.logger.logInfo("Exiting main loop...")
                 self.shutdown()
     
     def mainLoop(self):
@@ -196,13 +199,10 @@ class MainRadioSystem:
          
         self.v = src.vlcinterfaces.VLCInterface()
         self.v.volume(self.v.vol)
-        print("Connected")
         self.irint = src.irinterfaces.IRInterface()
-        print("IR interface loaded")
         self.readSourceStreamList()
-        print("Stream file read")
 
-        print("Starting loop")
+        src.logger.logInfo("Starting main loop...")
         self.readLoop()
         #t=threading.Thread(target=self.readLoop)
         #t.daemon = True

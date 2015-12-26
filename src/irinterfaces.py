@@ -1,19 +1,23 @@
 import time
+import src.logger
+
 lircinstalled = True
 try:
     import lirc
 except ImportError:
-    print("Error: Could not import python lirc package. Is it installed?")
+    src.logger.logFError("Error: Could not import python lirc package. Is it installed?")
     lircinstalled = False
 
-class IRInterface:
+class IRInterface(object):
 
     def __init__(self):
+        src.logger.logInfo("Initializing IRInterface...")
         if lircinstalled:
             lirc.init("lircradiosystem","lircradiosystem.lirc")
         self.counter = 3
         self.channel = ""
         self.numkeys = ["key-zero","key-one","key-two","key-three","key-four","key-five","key-six","key-seven","key-eight","key-nine"]
+        src.logger.logOk("IRInterface initialized.")
         
     def readIRInput(self):
         if lircinstalled:
@@ -37,5 +41,7 @@ class IRInterface:
         return ""
     
     def shutdown(self):
+        src.logger.logInfo("Deinitializing IRInterface...")
         if lircinstalled:
             lirc.deinit()
+        src.logger.logOk("IRInterface deinitalized.")

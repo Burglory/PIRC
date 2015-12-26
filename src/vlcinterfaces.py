@@ -1,5 +1,6 @@
 import socket, subprocess, time
 import src.configs
+import src.logger
 
 class VLCInterface:
 
@@ -17,6 +18,7 @@ class VLCInterface:
    
 
     def __init__(self):
+        src.logger.logInfo("Initializing VLCInterface...")
         self.vol = 200
         self.oldvol = -1
         #Remove this line:
@@ -25,7 +27,7 @@ class VLCInterface:
             self.addr = src.configs.Config.configDict["RC_HOST"].split(":")[0]
             self.port = int(src.configs.Config.configDict["RC_HOST"].split(":")[1])
         else:
-            print("Error: VLCInterface: src.configs.Config file has not been loaded.")
+            src.logger.logFError("VLCInterface: src.configs.Config file has not been loaded.")
             exit(1)
 
         runcommand = []
@@ -51,25 +53,39 @@ class VLCInterface:
             if src.configs.Config.configDict["HTTP_PORT"]:
                 runcommand.append("--http-port")
                 runcommand.append(src.configs.Config.configDict["HTTP_PORT"])
-        print("Starting the player with the following command: \n\t"+" ".join(runcommand))    
+        src.logger.logInfo("Starting the player with the following command:")
+        src.logger.log(" ".join(runcommand))    
         self.process = subprocess.Popen(runcommand, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tries = 10
+        time.sleep(2)
+        src.logger.logInfo("Trying to connect to VLC...")
         while tries > 0:
             try:
                 self.socket.connect((self.addr, self.port))
                 break
             except ConnectionRefusedError:
                 tries = tries - 1
-                time.sleep(3)
+                src.logger.logError("Failed to connect to VLC. Retrying...("+str(tries)+" tries left)")
+                time.sleep(1)
+                if self.process.poll():
+                    src.logger.logFError("VLC terminated prematurely with exitcode: " + str(self.process.poll()))
+                    return
+                
         if tries == 0:
-            print("Error: Failed to create VLCInterface. Connection refused.")
+            src.logger.logFError("Failed to create VLCInterface. Connection refused.")
             self.process.kill()
+            return
+        if not self.process.poll():
+            src.logger.logOk("Succesfully connected to VLC.")
+        src.logger.logOk("VLCInterface initialized.")
 
     def shutdown(self):
+        src.logger.logInfo("Deinitializing VLCInterface...")
         self.socket.send('quit\n'.encode('utf-8'))
         self.socket.close()
         self.process.kill()
+        src.logger.logOk("VLCInterface deinitialized.")
     
     def play(self):
         self.send(self.PLAY)
