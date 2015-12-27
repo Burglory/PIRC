@@ -23,5 +23,6 @@ Buttons = [
     "key-mute", #Used to mute and unmute the playback.
     "key-move_mode_switch", #Used to start switching moving streams to different channels.
     "key-sounds_switch", #Used to turn sounds off or on.
-    "key-update_software" #Used to update the current version of the software.
+    "key-update_software", #Used to update the current version of the software.
+    "key-switch_source" #Used to switch between source list and selection list.
     ]

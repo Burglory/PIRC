@@ -9,6 +9,7 @@ import src.streams
 import src.configs
 import src.logger
 import src.updater
+import src.argumentparser
 
 class MainRadioSystem:
 
@@ -70,9 +71,12 @@ class MainRadioSystem:
        
     def shutdown(self):
         src.logger.logInfo("Shutting down radio...")
-        self.v.shutdown()
-        self.irint.shutdown()
+        if self.v:
+            self.v.shutdown()
+        if self.irint:
+            self.irint.shutdown()
         #os.system("shutdown now -h")
+        src.logger.logOk("Exiting...")
         exit(0)
 
     def previousChannel(self):
@@ -181,6 +185,7 @@ class MainRadioSystem:
         os.execv(sys.executable, args)
         
     def mainLoop(self):
+        src.argumentparser.parse(self, sys.argv[1:])
         cfile = "default.conf"
         if self.extractConfigFileArgument():
             cfile = self.extractConfigFileArgument()

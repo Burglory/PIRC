@@ -5,6 +5,7 @@ parser.add_argument('-U', '--update', action='store_true', required=False, help=
 
 def parse(mainradiosystem, args):
     args = parser.parse_args(args)
+    print(args)
     if args.update:
         print("Update time!")
         

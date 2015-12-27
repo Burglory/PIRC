@@ -6,7 +6,7 @@ lircinstalled = True
 try:
     import lirc
 except ImportError:
-    src.logger.logFError("Error: Could not import python lirc package. Is it installed?")
+    src.logger.logFError("Error: Could not import python lirc package. Is it installed? Please install: https://pypi.python.org/pypi/python-lirc/1.2.1")
     lircinstalled = False
 
 class IRInterface(object):
@@ -15,7 +15,11 @@ class IRInterface(object):
         self.m = mainradiosystem
         src.logger.logInfo("Initializing IRInterface...")
         if lircinstalled:
-            lirc.init(src.configs.Config.configDict["LIRC_CONFIG_PROGRAM_NAME"],src.configs.Config.configDict["LIRC_CONFIG_FILE"])
+            try:
+                lirc.init(src.configs.Config.configDict["LIRC_CONFIG_PROGRAM_NAME"], src.configs.Config.configDict["LIRC_CONFIG_FILE"])
+            except AttributeError:
+                src.logger.logFError("Module 'lirc' has no attribute 'init'. Please install: https://pypi.python.org/pypi/python-lirc/1.2.1")
+                mainradiosystem.shutdown()
         self.counter = 3
         self.channel = ""
         self.numkeys = ["key-zero","key-one","key-two","key-three","key-four","key-five","key-six","key-seven","key-eight","key-nine"]
