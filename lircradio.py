@@ -2,6 +2,7 @@ import socket
 import os
 import sys
 import threading
+import argparse
 import src.vlcinterfaces
 import src.irinterfaces
 import src.streams
@@ -38,7 +39,7 @@ class MainRadioSystem:
             self.genrelist.sort()
             f.close()
         else:
-            src.logger.logFError("Error: No streams have been loaded because the streams.source was not found.")
+            src.logger.logFError("No streams have been loaded because the streams.source was not found.")
             self.shutdown()
         src.logger.logOk("Streams source file read.")
             

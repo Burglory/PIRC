@@ -13,7 +13,9 @@ class Config(object):
                   "HTTP_HOST":"localhost:80",
                   "HTTP_PASSWORD":"admin",
                   "HTTP_PORT":"80",
-                  "VLC":"cvlc"
+                  "VLC":"cvlc",
+                  "LIRC_CONFIG_FILE":"lircradiosystem.lirc",
+                  "LIRC_CONFIG_PROGRAM_NAME":"lircradiosystem"
     }
     
     file_path = None

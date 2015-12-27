@@ -1,6 +1,6 @@
 import time
 import src.logger
-import argparse
+import src.configs
 
 lircinstalled = True
 try:
@@ -14,7 +14,7 @@ class IRInterface(object):
     def __init__(self):
         src.logger.logInfo("Initializing IRInterface...")
         if lircinstalled:
-            lirc.init("lircradiosystem","lircradiosystem.lirc")
+            lirc.init(src.configs.Config.configDict["LIRC_CONFIG_PROGRAM_NAME"],src.configs.Config.configDict["LIRC_CONFIG_FILE"])
         self.counter = 3
         self.channel = ""
         self.numkeys = ["key-zero","key-one","key-two","key-three","key-four","key-five","key-six","key-seven","key-eight","key-nine"]

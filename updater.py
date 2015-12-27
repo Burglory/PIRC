@@ -6,7 +6,7 @@ def extractConfigFileArgument():
 		return sys.arv[1]
 	return ""
 
-if __name__ == "__main__":
+def update():
 	if extractConfigFileArgument():
 		src.configs.Config(extractConfigFileArgument())
 	else:
@@ -31,7 +31,10 @@ if __name__ == "__main__":
 		if len(data) > 0:
 			newzipf.writestr(name.replace("PIRC-master/",""), data)
 	
-	#newzipf.extractall()
+	newzipf.extractall()
 	zipf.close()
 	newzipf.close()
 	os.remove("_PIRC.zip")
+
+if __name__ == "__main__":
+	update()
