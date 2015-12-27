@@ -1,18 +1,7 @@
 import src.configs
 import urllib.request, subprocess, zipfile, os, sys
 
-def extractConfigFileArgument():
-	if len(sys.argv) > 1:
-		return sys.arv[1]
-	return ""
-
 def update():
-	if extractConfigFileArgument():
-		src.configs.Config(extractConfigFileArgument())
-	else:
-		pass
-		#src.configs.Config("default.conf")
-	
 	url = ""
 	if src.configs.Config.isloaded:
 		url = src.configs.Config.configdictionary["SOFTWARE_SRC_URL"]
@@ -23,7 +12,6 @@ def update():
 		
 	urllib.request.urlretrieve(url, "_PIRC.zip")
 	
-	#subprocess.call(["unzip","PIRC.zip","-d","..", "-o"])
 	zipf = zipfile.ZipFile("_PIRC.zip",'r')
 	newzipf = zipfile.ZipFile("PIRC.zip",'w')
 	for name in zipf.namelist():

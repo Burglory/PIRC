@@ -2,13 +2,13 @@ import socket
 import os
 import sys
 import threading
+import argparse
 import src.vlcinterfaces
 import src.irinterfaces
 import src.streams
 import src.configs
 import src.logger
 import src.updater
-import src.argumentparser
 
 class MainRadioSystem:
 
@@ -149,6 +149,11 @@ class MainRadioSystem:
         self.previousstreamindex = self.currentstreamindex
         self.currentstreamindex = index
         self.currentgenreindex = self.genrelist.index(self.streamlist[index].getGenre())
+
+    def extractConfigFileArgument(self):
+        if len(sys.argv) > 1:
+            return sys.argv[1]
+        return ""
     
     def readLoop(self):
         src.logger.logInfo("Waiting for IR input...")
@@ -176,8 +181,9 @@ class MainRadioSystem:
         os.execv(sys.executable, args)
         
     def mainLoop(self):
-        src.argumentparser.parse(self, sys.argv)
         cfile = "default.conf"
+        if self.extractConfigFileArgument():
+            cfile = self.extractConfigFileArgument()
         src.configs.Config(cfile)
            
         self.readSourceStreamList()
