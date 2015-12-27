@@ -15,7 +15,9 @@ class Config(object):
                   "HTTP_PORT":"80",
                   "VLC":"cvlc",
                   "LIRC_CONFIG_FILE":"lircradiosystem.lirc",
-                  "LIRC_CONFIG_PROGRAM_NAME":"lircradiosystem"
+                  "LIRC_CONFIG_PROGRAM_NAME":"lircradiosystem",
+                  "VOLUME_INCREMENT":"5",
+                  "VOLUME_BASE":"200"
     }
     
     file_path = None

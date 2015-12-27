@@ -11,7 +11,8 @@ except ImportError:
 
 class IRInterface(object):
 
-    def __init__(self):
+    def __init__(self, mainradiosystem):
+        self.m = mainradiosystem
         src.logger.logInfo("Initializing IRInterface...")
         if lircinstalled:
             lirc.init(src.configs.Config.configDict["LIRC_CONFIG_PROGRAM_NAME"],src.configs.Config.configDict["LIRC_CONFIG_FILE"])
@@ -19,27 +20,60 @@ class IRInterface(object):
         self.channel = ""
         self.numkeys = ["key-zero","key-one","key-two","key-three","key-four","key-five","key-six","key-seven","key-eight","key-nine"]
         src.logger.logOk("IRInterface initialized.")
-        
-    def readIRInput(self):
+
+    def interpret(self, command):
+        src.logger.logInfo("Received input: " + command)
+        for i, j in enumerate(self.numkeys):
+            if j == command:
+                self.channel = self.channel+str(i)
+                self.counter = self.counter - 1
+                if self.counter == 0:
+                    self.m.findIndexForNearestPreviousChannel(int(self.channel))
+                    self.channel = ""
+                    self.counter = 3
+                    return
+                else:
+                    #Return?
+                    return
+
+        if "key-play" in command:
+            self.m.v.play()
+        elif "key-quit" in command:
+            self.m.shutdown()
+        elif "key-pause" in command:
+            self.m.v.pause()
+        elif "key-stop" in command:
+            self.m.v.stop()
+        elif "key-next" in command:
+            self.m.nextStream()
+        elif "key-prev" in command:
+            self.m.previousStream()
+        elif "key-nextgenre" in command:
+            self.m.nextGenre()
+        elif "key-previousgenre" in command:
+            self.m.previousGenre()
+        elif "key-volup" in command:
+            self.m.v.volup(int(src.configs.Config.configDict["VOLUME_INCREMENT"]))
+        elif "key-voldown" in command:
+            self.m.v.voldown(int(src.configs.Config.configDict["VOLUME_INCREMENT"]))
+        elif "key-previouschannel" in command:
+            self.m.previousChannel()
+        elif "key-mute" in command:
+            self.m.v.mute_unmute()
+        elif "key-move_mode_switch":
+            pass
+        elif "key-sounds_switch":
+            pass
+        elif "key-update_software":
+            pass
+    
+    def processIRInput(self):
         if lircinstalled:
             i = lirc.nextcode()
             if len(i)>0:
-                command = i[0]
-                for i, j in enumerate(self.numkeys):
-                    if j == command:
-                        self.channel = self.channel+str(i)
-                        self.counter = self.counter - 1
-                        if self.counter == 0:
-                            result = "key-channelselection " + self.channel
-                            self.channel = ""
-                            self.counter = 3
-                            return result
-                        else:
-                            return ""
-                return command
+                interpret(i[0])
         else:
             time.sleep(1)
-        return ""
     
     def shutdown(self):
         src.logger.logInfo("Deinitializing IRInterface...")

@@ -19,7 +19,7 @@ class VLCInterface:
 
     def __init__(self):
         src.logger.logInfo("Initializing VLCInterface...")
-        self.vol = 200
+        self.vol = int(src.configs.Config.configDict["VOLUME_BASE"])
         self.oldvol = -1
         self.addr = src.configs.Config.configDict["RC_HOST"].split(":")[0]
         self.port = int(src.configs.Config.configDict["RC_HOST"].split(":")[1])

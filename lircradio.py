@@ -149,36 +149,6 @@ class MainRadioSystem:
         self.currentstreamindex = index
         self.currentgenreindex = self.genrelist.index(self.streamlist[index].getGenre())
 
-    def processIRInput(self, i):
-        src.logger.logInfo("Received input: " + i)
-        if "key-channelselection" in i:
-            channel = int(i.split(' ')[1])
-            self.findIndexForNearestPreviousChannel(channel)
-        elif "key-play" in i:
-            self.v.play()
-        elif "key-quit" in i:
-            self.shutdown()
-        elif "key-pause" in i:
-            self.v.pause()
-        elif "key-stop" in i:
-            self.v.stop()
-        elif "key-next" in i:
-            self.nextStream()
-        elif "key-prev" in i:
-            self.previousStream()
-        elif "key-nextgenre" in i:
-            self.nextGenre()
-        elif "key-previousgenre" in i:
-            self.previousGenre()
-        elif "key-volup" in i:
-            self.v.volup(5)
-        elif "key-voldown" in i:
-            self.v.voldown(5)
-        elif "key-previouschannel" in i:
-            self.previousChannel()
-        elif "key-mute" in i:
-            self.v.mute_unmute()
-
     def extractConfigFileArgument(self):
         if len(sys.argv) > 1:
             return sys.arv[1]
@@ -188,9 +158,7 @@ class MainRadioSystem:
         src.logger.logInfo("Waiting for IR input...")
         while True:
             try:
-                i = self.irint.readIRInput()
-                if len(i) > 0:
-                    self.processIRInput(i)
+                self.irint.processIRInput()
             except (KeyboardInterrupt):
                 src.logger.logInfo("Exiting main loop...")
                 self.shutdown()
