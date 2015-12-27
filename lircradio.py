@@ -8,6 +8,7 @@ import src.irinterfaces
 import src.streams
 import src.configs
 import src.logger
+import src.updater
 
 class MainRadioSystem:
 
@@ -162,7 +163,23 @@ class MainRadioSystem:
             except (KeyboardInterrupt):
                 src.logger.logInfo("Exiting main loop...")
                 self.shutdown()
-    
+
+    def update(self):
+        src.updater.update()
+
+    def restart(self):
+        args = sys.argv[:]
+        if "--update" in args: args.remove("--update")
+        if "-U" in args: args.remove("-U")
+        src.logger.logInfo('Re-spawning %s' % ' '.join(args))
+
+        args.insert(0, sys.executable)
+        if sys.platform == 'win32':
+            args = ['"%s"' % arg for arg in args]
+
+        os.chdir(_startup_cwd)
+        os.execv(sys.executable, args)
+        
     def mainLoop(self):
         cfile = "default.conf"
         if self.extractConfigFileArgument():
@@ -173,14 +190,16 @@ class MainRadioSystem:
                  
         self.v = src.vlcinterfaces.VLCInterface()
         self.v.volume(self.v.vol)
-        self.irint = src.irinterfaces.IRInterface()
+        self.irint = src.irinterfaces.IRInterface(self)
 
 
         src.logger.logInfo("Starting main loop...")
+        self.restart()
         self.readLoop()
         #t=threading.Thread(target=self.readLoop)
         #t.daemon = True
         #t.start()
+ 
                 
 
 if __name__ == "__main__":

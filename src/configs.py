@@ -1,4 +1,5 @@
 import os.path
+import src.logger
 
 class Config(object):
 
@@ -29,25 +30,31 @@ class Config(object):
         Config.file_path = file_path
 
     def load(self, file_path):
+        src.logger.logInfo("Loading config file...")
         f = None
         if os.path.isfile(file_path):
             f = open(file_path, 'r')
         else:
-            print("Error: Cannot find config file: " + file_path)
-            print("Falling back on default config file.")
+            src.logger.logError("Cannot find config file: " + file_path + " . Falling back on default config file.")
             if os.path.isfile('default.conf'):
                 f = open('default.conf','r')
             else:
-                print("Error: Cannot find config file: default.conf")
-                print("Config has not been loaded.")
+                src.logger.logError("Cannot find config file: default.conf . Config has not been loaded.")
+                src.logger.logError("Falling back on programmed defaults.")
                 return
         contents = f.read()
         f.close()
         lines = contents.split("\n")
         for line in lines:
+            if not line:
+                continue
             keyvalue = line.split("=", 1)
+            if len(keyvalue) != 2:
+                src.logger.logFError("A fatal error occurred in reading the config file. The config file has been corrupted:")
+                src.logger.log(line)
+                exit(1)
             Config.configDict[keyvalue[0]] = keyvalue[1]
-        print("Config file loaded.")
+        src.logger.logOk("Config file loaded.")
         Config.file_path = file_path
         Config.isloaded = True
 

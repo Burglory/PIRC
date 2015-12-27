@@ -8,17 +8,35 @@ class Bcolors(object):
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+LevelFError = 5
+LevelError = 4
+LevelOk = 3
+LevelInfo = 2
+LevelLog = 1
+
+LogLevel = 1
+
 def logFError(message):
-    print(Bcolors.FAIL + "[ FATAL ]\t"+message + Bcolors.ENDC)
+    if LogLevel > LevelFError:
+        return
+    print(Bcolors.FAIL + "[ FATAL ]\t" + Bcolors.ENDC+message)
 
 def logError(message):
-    print(Bcolors.WARNING + "[ ERROR ]\t"+message + Bcolors.ENDC)
+    if LogLevel > LevelError:
+        return
+    print(Bcolors.WARNING + "[ ERROR ]\t"+ Bcolors.ENDC+message)
 
 def logOk(message):
-    print(Bcolors.OKGREEN + "[  OK  ]\t"+message + Bcolors.ENDC)
+    if LogLevel > LevelOk:
+        return
+    print(Bcolors.OKGREEN + "[  OK  ]\t"+ Bcolors.ENDC+message)
 
 def logInfo(message):
-    print(Bcolors.OKBLUE + "[ INFO ]\t"+message + Bcolors.ENDC)
+    if LogLevel > LevelInfo:
+        return
+    print(Bcolors.OKBLUE + "[ INFO ]\t"+ Bcolors.ENDC+message)
 
 def log(message):
+    if LogLevel > LevelInfo:
+        return
     print(message)
