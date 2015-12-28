@@ -14,7 +14,7 @@ LevelOk = 3
 LevelInfo = 2
 LevelLog = 1
 
-LogLevel = 1
+LogLevel = 3
 
 def logFError(message):
     if LogLevel > LevelFError:
@@ -37,6 +37,6 @@ def logInfo(message):
     print(Bcolors.OKBLUE + "[ INFO ]\t"+ Bcolors.ENDC+message)
 
 def log(message):
-    if LogLevel > LevelInfo:
+    if LogLevel > LevelLog:
         return
     print(message)

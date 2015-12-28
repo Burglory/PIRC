@@ -153,11 +153,6 @@ class MainRadioSystem:
         self.previousstreamindex = self.currentstreamindex
         self.currentstreamindex = index
         self.currentgenreindex = self.genrelist.index(self.streamlist[index].getGenre())
-
-    def extractConfigFileArgument(self):
-        if len(sys.argv) > 1:
-            return sys.argv[1]
-        return ""
     
     def readLoop(self):
         src.logger.logInfo("Waiting for IR input...")
@@ -186,10 +181,6 @@ class MainRadioSystem:
         
     def mainLoop(self):
         src.argumentparser.parse(self, sys.argv[1:])
-        cfile = "default.conf"
-        if self.extractConfigFileArgument():
-            cfile = self.extractConfigFileArgument()
-        src.configs.Config(cfile)
            
         self.readSourceStreamList()
                  

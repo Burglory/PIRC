@@ -21,6 +21,7 @@ class Config(object):
                   "VOLUME_BASE":"200"
     }
     
+    defaultconfigfilename = "default.conf"
     file_path = None
     isloaded = False
 
