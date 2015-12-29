@@ -17,16 +17,17 @@ class Config(object):
                   "VLC":"cvlc",
                   "LIRC_CONFIG_FILE":".lircradiosystem.lirc",
                   "LIRC_CONFIG_PROGRAM_NAME":"lircradiosystem",
+                  "SESSION_FILE":".session",
                   "VOLUME_INCREMENT":"5",
                   "VOLUME_BASE":"200"
     }
     
     defaultconfigfilename = "default.conf"
-    file_path = None
+    file_path = defaultconfigfilename
     isloaded = False
 
-    def __init__(self, file_path):
-        Config.configDict = dict()
+    def __init__(self, file_path="default.conf"):
+        #Config.configDict = dict()
         self.load(file_path)
         Config.file_path = file_path
 
@@ -37,8 +38,8 @@ class Config(object):
             f = open(file_path, 'r')
         else:
             src.logger.logError("Cannot find config file: " + file_path + " . Falling back on default config file.")
-            if os.path.isfile(defaultconfigfilename):
-                f = open(defaultconfigfilename,'r')
+            if os.path.isfile(Config.defaultconfigfilename):
+                f = open(Config.defaultconfigfilename,'r')
             else:
                 src.logger.logError("Cannot find config file: default.conf . Config has not been loaded.")
                 src.logger.logError("Falling back on programmed defaults.")
@@ -68,13 +69,21 @@ class Config(object):
     def setValue(self, key, value):
         Config.configDict[key] = value
 
-    def save(self):
+    def save(dic):
         result = ""
-        for key in Config.configDict.keys():
-            result = result + key + "=" + Config.configDict[key] + "\n"
-        f = open(Config.file_path, 'w')
+        l = []
+        for key in dic.keys():
+            l.append(str(key))
+        l.sort()
+        for key in l:
+            result = result + key + "=" + dic[key] + "\n"
+        f=None
+        if Config.file_path:
+            f = open(Config.file_path, 'w')
+        else:
+            f = open(Config.defaultconfigfilename, 'w')
         f.write(result)
         f.close()
 
-# if __name__ == "__main__":
-#     Config("../default.conf")
+if __name__ == "__main__":
+    Config.save()
