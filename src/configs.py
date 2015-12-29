@@ -6,7 +6,7 @@ class Config(object):
     configDict = {
                   "SOFTWARE_SOURCE_URL":"https://github.com/Burglory/PIRC",
                   "STREAM_SOURCE_FILE":"streams.source",
-                  "STREAM_SELECTION_FILE":"streams.selection",
+                  "STREAM_SELECTION_FILE":".streams.selection",
                   "SHUTDOWN_COMMAND":"shutdown -h now",
                   "RC_HOST":"localhost:8080",
                   "HTTP_ENABLED":"1",
@@ -15,7 +15,7 @@ class Config(object):
                   "HTTP_PASSWORD":"admin",
                   "HTTP_PORT":"80",
                   "VLC":"cvlc",
-                  "LIRC_CONFIG_FILE":"lircradiosystem.lirc",
+                  "LIRC_CONFIG_FILE":".lircradiosystem.lirc",
                   "LIRC_CONFIG_PROGRAM_NAME":"lircradiosystem",
                   "VOLUME_INCREMENT":"5",
                   "VOLUME_BASE":"200"
@@ -37,8 +37,8 @@ class Config(object):
             f = open(file_path, 'r')
         else:
             src.logger.logError("Cannot find config file: " + file_path + " . Falling back on default config file.")
-            if os.path.isfile('default.conf'):
-                f = open('default.conf','r')
+            if os.path.isfile(defaultconfigfilename):
+                f = open(defaultconfigfilename,'r')
             else:
                 src.logger.logError("Cannot find config file: default.conf . Config has not been loaded.")
                 src.logger.logError("Falling back on programmed defaults.")
@@ -76,5 +76,5 @@ class Config(object):
         f.write(result)
         f.close()
 
-if __name__ == "__main__":
-    Config("../default.conf")
+# if __name__ == "__main__":
+#     Config("../default.conf")
