@@ -24,6 +24,7 @@ def parse(mainradiosystem, args):
         src.logger.LogLevel = 99
     if args.generate:
         src.configs.Config.save(src.configs.Config.configDict)
+        mainradiosystem.shutdown()
     if args.config:
         src.configs.Config(args.config.name)
     else:

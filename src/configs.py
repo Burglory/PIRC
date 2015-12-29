@@ -52,8 +52,7 @@ class Config(object):
                 continue
             keyvalue = line.split("=", 1)
             if len(keyvalue) != 2:
-                src.logger.logFError("A fatal error occurred in reading the config file. The config file has been corrupted:")
-                src.logger.log(line)
+                src.logger.logFError("A fatal error occurred in reading the config file. The config file has been corrupted:\n"+line)
                 exit(1)
             Config.configDict[keyvalue[0]] = keyvalue[1]
         src.logger.logOk("Config file loaded.")
@@ -70,6 +69,7 @@ class Config(object):
         Config.configDict[key] = value
 
     def save(dic):
+        src.logger.logInfo("Saving config to file...")
         result = ""
         l = []
         for key in dic.keys():
@@ -84,6 +84,7 @@ class Config(object):
             f = open(Config.defaultconfigfilename, 'w')
         f.write(result)
         f.close()
+        src.logger.logOk("Config file saved.")
 
 if __name__ == "__main__":
     Config.save()

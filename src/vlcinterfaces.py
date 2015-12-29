@@ -1,6 +1,7 @@
 import socket, subprocess, time
 import src.configs
 import src.logger
+import src.sessions
 
 class VLCInterface:
 
@@ -94,16 +95,19 @@ class VLCInterface:
         self.oldvol = self.vol
         self.vol = self.vol + amount
         self.send(self.VOLUME + ' ' + str(self.vol))
+        src.sessions.defaultsession.setLastVolume(self.vol)
 
     def voldown(self, amount):
         self.oldvol = self.vol
         self.vol = self.vol - amount
         self.send(self.VOLUME + ' ' + str(self.vol))
+        src.sessions.defaultsession.setLastVolume(self.vol)
         
     def volume(self, volume):
         self.oldvol = self.vol
         self.vol = volume
         self.send(self.VOLUME + ' ' + str(volume))
+        src.sessions.defaultsession.setLastVolume(self.vol)
 
     def clear(self):
         self.send(self.CLEAR)

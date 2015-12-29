@@ -10,6 +10,7 @@ import src.configs
 import src.logger
 import src.updater
 import src.argumentparser
+import src.sessions
 
 class MainRadioSystem:
 
@@ -71,6 +72,7 @@ class MainRadioSystem:
        
     def shutdown(self):
         src.logger.logInfo("Shutting down radio...")
+        src.sessions.save()
         if self.v:
             self.v.shutdown()
         if self.irint:
@@ -153,6 +155,7 @@ class MainRadioSystem:
         self.previousstreamindex = self.currentstreamindex
         self.currentstreamindex = index
         self.currentgenreindex = self.genrelist.index(self.streamlist[index].getGenre())
+        src.sessions.defaultsession.setLastPlayed(self.currentstreamindex)
     
     def readLoop(self):
         src.logger.logInfo("Waiting for IR input...")
