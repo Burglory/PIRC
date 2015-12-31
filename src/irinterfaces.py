@@ -76,7 +76,7 @@ class IRInterface(object):
         if lircinstalled:
             i = lirc.nextcode()
             if len(i)>0:
-                interpret(i[0])
+                self.interpret(i[0])
         else:
             time.sleep(1)
     
