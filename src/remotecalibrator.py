@@ -1,5 +1,5 @@
 import subprocess, os, signal
-import buttons
+import src.buttons
 import src.logger
 import src.configs
 
