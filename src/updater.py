@@ -1,14 +1,11 @@
 import src.configs
+import src.logger
 import urllib.request, subprocess, zipfile, os, sys
 
 def update():
 	url = ""
-	if src.configs.Config.isloaded:
-		url = src.configs.Config.configdictionary["SOFTWARE_SRC_URL"]
-		url = url + "/archive/master.zip"
-	else:
-		print("Error: Config file has not been properly loaded. Cannot read download URL.")
-		url = raw_input("\tPlease enter download URL for the zip file manually:")
+	url = src.configs.Config.configdictionary["SOFTWARE_SRC_URL"]
+	url = url + "/archive/master.zip"
 		
 	urllib.request.urlretrieve(url, "_PIRC.zip")
 	

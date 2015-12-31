@@ -1,5 +1,7 @@
 import subprocess, os, signal
 import buttons
+import src.logger
+import src.configs
 
 class RemoteCalibrator(object):
 
@@ -17,15 +19,16 @@ end
 """
 
     def complete(self):
-        print("Writing to file.")
-        f = open('buttonsconfig.lirc','w')
+        src.logger.logInfo("Writing to file.", force=True)
+        f = open(src.configs.Config.configDict["LIRC_CONFIG_FILE"],'w')
         f.write(self.result)
         f.close()
+        src.logger.logOk("Config written to file.", force=True)
 
-    def process(line):
+    def process(self, line):
         button = line.split(" ")[1]
         if i<len(buttons.Buttons):
-            print(buttons.Buttons[i] + " has been assigned to: " + button)
+            src.logger.logOk(buttons.Buttons[i] + " has been assigned to: " + button, force=True)
             restemplate = template.replace("{b}",button)
             restemplate = restemplate.replace("{c}",buttons.Buttons[i])
             if "key-vol" in buttons.Buttons[i]:
@@ -34,28 +37,31 @@ end
             i=i+1
         
         if i<len(buttons.Buttons):
-            print("Please assign: "+buttons.Buttons[i])
+            src.logger.logInfo("Please assign: "+buttons.Buttons[i], force=True)
         else:
-            print("Assignment of buttons has been completed.")
+            src.logger.logOk("Assignment of buttons has been completed.", force=True)
             self.popen = subprocess.Popen(["kill", str(self.popen.pid)])
-            complete()
+            self.complete()
 
-    def execute(command):
+    def execute(self, command):
         try:
             self.popen = subprocess.Popen(command, stdout=subprocess.PIPE)
-            print("Please assign: "+buttons.Buttons[i])
+            src.logger.logInfo("Please assign: "+buttons.Buttons[i], force=True)
             lines_iterator = iter(self.popen.stdout.readline, b"")
             lastline = ""
             for line in lines_iterator:
                 linestring = line.decode("UTF-8")
                 if lastline!=linestring:
-                    process(linestring)
+                    self.process(linestring)
                 lastline = linestring
                 
         except KeyboardInterrupt:
-            print("Assignment of buttons has been interrupted and aborted.")
+            src.logger.logFError("Assignment of buttons has been interrupted and aborted.", force=True)
             self.popen = subprocess.Popen(["kill", str(self.popen.pid)])
 
+    def runCalibrator(self):
+        self.execute(["irw"])
+        
 if __name__=="__main__":
     execute(["irw"])
 

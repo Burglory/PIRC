@@ -15,6 +15,7 @@ import src.sessions
 class MainRadioSystem:
 
     def __init__(self):
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
         self.v = None
         self.streamlist = list()
         self.genrelist = list()
@@ -176,13 +177,17 @@ class MainRadioSystem:
         args = sys.argv[:]
         if "--update" in args: args.remove("--update")
         if "-U" in args: args.remove("-U")
-        src.logger.logInfo('Re-spawning %s' % ' '.join(args))
+        
+        
+        pyfile = args[0].split('/')[-1]
 
         args.insert(0, sys.executable)
+        args.insert(1, pyfile)
+        src.logger.logInfo('Re-spawning %s' % ' '.join(args))
         if sys.platform == 'win32':
             args = ['"%s"' % arg for arg in args]
 
-        os.chdir(os.getcwd())
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
         os.execv(sys.executable, args)
         
     def mainLoop(self):

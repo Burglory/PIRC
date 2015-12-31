@@ -16,27 +16,30 @@ LevelLog = 1
 
 LogLevel = 3
 
-def logFError(message):
-    if LogLevel > LevelFError:
+def logFError(message, force=False):
+    if LogLevel > LevelFError and not force:
         return
-    print(Bcolors.FAIL + "[ FATAL ]\t" + Bcolors.ENDC+message)
+    _print(Bcolors.FAIL + "[ FATAL ]\t" + Bcolors.ENDC+message)
 
-def logError(message):
-    if LogLevel > LevelError:
+def logError(message, force=False):
+    if LogLevel > LevelError and not force:
         return
-    print(Bcolors.WARNING + "[ ERROR ]\t"+ Bcolors.ENDC+message)
+    _print(Bcolors.WARNING + "[ ERROR ]\t"+ Bcolors.ENDC+message)
 
-def logOk(message):
-    if LogLevel > LevelOk:
+def logOk(message, force=False):
+    if LogLevel > LevelOk and not force:
         return
-    print(Bcolors.OKGREEN + "[  OK  ]\t"+ Bcolors.ENDC+message)
+    _print(Bcolors.OKGREEN + "[  OK  ]\t"+ Bcolors.ENDC+message)
 
-def logInfo(message):
-    if LogLevel > LevelInfo:
+def logInfo(message, force=False):
+    if LogLevel > LevelInfo and not force:
         return
-    print(Bcolors.OKBLUE + "[ INFO ]\t"+ Bcolors.ENDC+message)
+    _print(Bcolors.OKBLUE + "[ INFO ]\t"+ Bcolors.ENDC+message)
 
-def log(message):
-    if LogLevel > LevelLog:
+def log(message, force=False):
+    if LogLevel > LevelLog and not force:
         return
+    _print(message)
+
+def _print(message):
     print(message)
