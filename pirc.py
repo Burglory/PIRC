@@ -194,7 +194,7 @@ class MainRadioSystem:
 
 
         src.logger.logInfo("Starting main loop...")
-        self.restart()
+        #self.restart()
         self.readLoop()
         #t=threading.Thread(target=self.readLoop)
         #t.daemon = True
