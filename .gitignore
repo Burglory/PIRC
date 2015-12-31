@@ -1,3 +1,6 @@
 __pycache__
 __pycache__/
+.session
+.streams.selection
+.lircradiosystem.lirc
 .*
