@@ -4,7 +4,7 @@ import urllib.request, subprocess, zipfile, os, sys
 
 def update():
 	url = ""
-	url = src.configs.Config.configDict["SOFTWARE_SRC_URL"]
+	url = src.configs.Config.configDict["SOFTWARE_SOURCE_URL"]
 	url = url + "/archive/master.zip"
 		
 	urllib.request.urlretrieve(url, "_PIRC.zip")
