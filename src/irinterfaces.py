@@ -42,7 +42,7 @@ class IRInterface(object):
                     return
 
         if "key-play" in command:
-            self.m.v.play()
+            self.m.play()
         elif "key-quit" in command:
             self.m.shutdown()
         elif "key-pause" in command:

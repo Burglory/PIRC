@@ -149,6 +149,9 @@ class MainRadioSystem:
             index = index + len(self.streamlist)
         self.playstreamindex(index)
 
+    def play(self):
+        self.playstreamindex(self.currentstreamindex)
+
     def playstreamindex(self, index):
         src.logger.logInfo("Playing: " + self.streamlist[index].getURL())
         self.v.play(self.streamlist[index].getURL())
