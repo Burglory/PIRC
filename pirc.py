@@ -182,6 +182,7 @@ class MainRadioSystem:
         pyfile = args[0].split('/')[-1]
 
         args.insert(0, sys.executable)
+        del args[1]
         args.insert(1, pyfile)
         src.logger.logInfo('Re-spawning %s' % ' '.join(args))
         if sys.platform == 'win32':
