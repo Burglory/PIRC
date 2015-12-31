@@ -187,7 +187,7 @@ class MainRadioSystem:
         if sys.platform == 'win32':
             args = ['"%s"' % arg for arg in args]
 
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        #os.chdir(os.path.dirname(os.path.realpath(__file__)))
         os.execv(sys.executable, args)
         
     def mainLoop(self):
