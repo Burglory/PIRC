@@ -188,7 +188,8 @@ class MainRadioSystem:
         self.readSourceStreamList()
                  
         self.v = src.vlcinterfaces.VLCInterface()
-        self.v.volume(self.v.vol)
+        self.v.volume(src.sessions.defaultsession.getLastVolume())
+        self.playstreamindex(src.sessions.defaultsession.getLastPlayed())
         self.irint = src.irinterfaces.IRInterface(self)
 
 

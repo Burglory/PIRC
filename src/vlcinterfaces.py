@@ -48,8 +48,8 @@ class VLCInterface:
             if src.configs.Config.configDict["HTTP_PORT"]:
                 runcommand.append("--http-port")
                 runcommand.append(src.configs.Config.configDict["HTTP_PORT"])
-        src.logger.logInfo("Starting the player with the following command:")
-        src.logger.log(" ".join(runcommand))    
+        src.logger.logInfo("Starting the player.")
+        src.logger.log("Starting VLC with: \n"+" ".join(runcommand))    
         self.process = subprocess.Popen(runcommand, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tries = 10

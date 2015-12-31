@@ -32,6 +32,7 @@ def saveToFile(file_path):
     f.close()
 
 def load():
+    src.logger.logInfo("Loading session file.")
     return loadFromFile(src.configs.Config.configDict["SESSION_FILE"])
 
 def loadFromFile(file_path):
@@ -56,6 +57,7 @@ def loadFromString(string):
             result.setLastPlayed(int(linesections[1]))
         elif linesections[0]=="LASTVOLUME":
             result.setLastVolume(int(linesections[1]))
+    src.logger.logOk("Session file loaded.")
     return result
 
 defaultsession=load()

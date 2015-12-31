@@ -19,6 +19,7 @@ class IRInterface(object):
                 lirc.init(src.configs.Config.configDict["LIRC_CONFIG_PROGRAM_NAME"], src.configs.Config.configDict["LIRC_CONFIG_FILE"])
             except AttributeError:
                 src.logger.logFError("Module 'lirc' has no attribute 'init'. Please install latest version from: https://pypi.python.org/pypi/python-lirc/")
+                src.logger.logFError("IRInterface initialization failed.")
                 mainradiosystem.shutdown()
         self.counter = 3
         self.channel = ""
