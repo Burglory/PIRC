@@ -202,7 +202,7 @@ class MainRadioSystem:
         self.irint = src.irinterfaces.IRInterface(self)
 
 
-        src.logger.logInfo("Starting main loop...")
+        src.logger.logOk("Starting main loop...")
         #self.restart()
         self.readLoop()
         #t=threading.Thread(target=self.readLoop)
