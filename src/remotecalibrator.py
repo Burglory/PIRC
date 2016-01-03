@@ -60,9 +60,9 @@ end
             self.popen = subprocess.Popen(["kill", str(self.popen.pid)])
 
     def runCalibrator(self):
-        self.execute(["irw"])
+        self.execute([src.configs.Config.configDict["LIRCD_CLIENT_COMMAND"]])
         
 if __name__=="__main__":
-    execute(["irw"])
+    execute([src.configs.Config.configDict["LIRCD_CLIENT_COMMAND"]])
 
 

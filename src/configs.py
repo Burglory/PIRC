@@ -19,7 +19,8 @@ class Config(object):
                   "LIRC_CONFIG_PROGRAM_NAME":"lircradiosystem",
                   "SESSION_FILE":".session",
                   "VOLUME_INCREMENT":"5",
-                  "VOLUME_BASE":"200"
+                  "VOLUME_BASE":"200",
+                  "LIRCD_CLIENT_COMMAND":"irw"
     }
     
     defaultconfigfilename = "default.conf"
